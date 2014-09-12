@@ -2,11 +2,17 @@ namespace :copy do
 
   archive_name = "archive.tar.gz"
   include_dir  = fetch(:include_dir) || "*"
-  exclude_dir  = fetch(:exclude_dir) || ""
+  exclude_dir  = fetch(:exclude_dir) || []
 
   desc "Archive files to #{archive_name}"
   file archive_name => FileList[include_dir].exclude(archive_name) do |t|
-    sh "tar -cvzf #{t.name} #{t.prerequisites.join(" ")}" + (exclude_dir.empty? ? "" : " --exclude #{exclude_dir}")
+    command = "tar"
+    exclude_dir.each do |dir|
+      command += " --exclude=#{dir}"
+    end
+    command += " -cvzf #{t.name} #{t.prerequisites.join(" ")}"
+
+    sh command
   end
 
   desc "Deploy #{archive_name} to release_path"
