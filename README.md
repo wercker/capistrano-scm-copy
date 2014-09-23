@@ -1,9 +1,11 @@
 capistrano-scm-copy
 ===================
 
+Capistrano 3 :copy 
+
 A copy strategy for Capistrano 3, which mimics the `:copy` scm of Capistrano 2.
 
-This will make Capistrano tar the current directory, upload it to the server(s) and then extract it in the release directory.
+This will make Capistrano tar the a specific git branch, upload it to the server(s) and then extract it in the release directory.
 
 Requirements
 ============
@@ -29,6 +31,14 @@ Then switch the `:scm` option to `:copy` in `config/deploy.rb`:
 
     set :scm, :copy
     
+
+Usage
+============
+
+```bash
+  cap uat deploy -s branch=(your release branch)
+  ```
+
 TODO
 ====
 

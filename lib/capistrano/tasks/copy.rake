@@ -1,12 +1,14 @@
 namespace :copy do
 
-  archive_name = "archive.tar.gz"
-  include_dir  = fetch(:include_dir) || "*"
-  exclude_dir  = fetch(:exclude_dir) || ""
+  archive_name =  "archive.#{ DateTime.now.strftime('%Y%m%d%m%s') }.tar.gz" 
+
+  # Deploy specific branch in the following way: 
+  # $ cap deploy -s branch=<the branch you want to deploy>
+  release_branch = ENV["branch"] || "master"
 
   desc "Archive files to #{archive_name}"
-  file archive_name => FileList[include_dir].exclude(archive_name) do |t|
-    sh "tar -cvzf #{t.name} #{t.prerequisites.join(" ")}" + (exclude_dir.empty? ? "" : " --exclude #{exclude_dir}")
+  file archive_name do |file| 
+    system "git archive #{ fetch(:branch) } --format tar.gz --output #{ archive_name }"
   end
 
   desc "Deploy #{archive_name} to release_path"
