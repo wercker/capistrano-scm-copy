@@ -1,4 +1,6 @@
 namespace :copy do
+  # Defalut to :all roles
+  tar_roles = fetch(:tar_roles, 'all')
 
   archive_name =  "archive.#{ DateTime.now.strftime('%Y%m%d%m%s') }.tar.gz" 
 
@@ -14,7 +16,7 @@ namespace :copy do
   desc "Deploy #{archive_name} to release_path"
   task :deploy => archive_name do |t|
     tarball = t.prerequisites.first
-    on roles :all do
+    on roles(tar_roles) do
 
       # Make sure the release directory exists
       execute :mkdir, "-p", release_path
