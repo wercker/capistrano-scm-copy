@@ -27,7 +27,8 @@ namespace :copy do
       execute :mkdir, "-p", release_path
 
       # Create a temporary file on the server
-      tmp_file = capture("mktemp")
+      remote_tmp_dir = fetch :scm_copy_remote_tmp_dir
+      tmp_file = capture(remote_tmp_dir.nil? ? "mktemp" : "mktemp -p #{remote_tmp_dir}")
 
       # Upload the archive, extract it and finally remove the tmp_file
       upload!(tarball, tmp_file)
