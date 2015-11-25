@@ -12,7 +12,8 @@ namespace :copy do
   file archive_name => FileList[include_dir].exclude(archive_name) do |t|
     exclude_dir  = Array(fetch(:exclude_dir))
     exclude_args = exclude_dir.map { |dir| "--exclude '#{dir}'"}
-    cmd = ["tar -c#{tar_verbose}zf #{t.name}", *exclude_args, *t.prerequisites]
+    extra_tar_args = Array(fetch(:extra_tar_args)) || []
+    cmd = ["tar -c#{tar_verbose}zf", t.name, *extra_tar_args, *exclude_args, *t.prerequisites]
     sh cmd.join(' ')
   end
 
