@@ -33,6 +33,10 @@ Then switch the `:scm` option to `:copy` in `config/deploy.rb`:
 
     set :scm, :copy
     
+Remove files and directories that you don't want to copy:
+
+    set :exclude_dir, ['tmp', 'config/*.yml']
+    
 TODO
 ====
 
