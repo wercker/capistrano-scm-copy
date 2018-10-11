@@ -11,8 +11,15 @@ namespace :copy do
 
   tar_verbose = fetch(:tar_verbose, true) ? "v" : ""
 
+  is_git_repo = File.exist?(".git")
   desc "Archive files to #{archive_name}"
-  file archive_name => FileList[include_dir].exclude(archive_name) do |t|
+  if is_git_repo
+    file_list =  FileList.new(`git ls-files --exclude-standard`.split("\n"))
+  else
+    file_list = FileList[include_dir]
+  end
+
+  file archive_name => file_list.exclude(archive_name) do |t|
     cmd = ["tar -c#{tar_verbose}zf #{t.name}", *exclude_args, *t.prerequisites]
     sh cmd.join(' ')
   end
