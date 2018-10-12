@@ -11,10 +11,19 @@ namespace :copy do
 
   tar_verbose = fetch(:tar_verbose, true) ? "v" : ""
 
+  build_dir = fetch(:build_dir, Dir.pwd)
+
   desc "Archive files to #{archive_name}"
   file archive_name => FileList[include_dir].exclude(archive_name) do |t|
-    cmd = ["tar -c#{tar_verbose}zf #{t.name}", *exclude_args, *t.prerequisites]
-    sh cmd.join(' ')
+        cmd = [
+            "tar -c#{tar_verbose}zf #{t.name}",
+            *exclude_args,
+            "-C #{build_dir}",
+            *t.prerequisites.map do |f|
+              f.sub(/^#{Regexp.quote(File.join(build_dir, ''))}/, '')
+            end
+        ]
+        sh cmd.join(' ')
   end
 
   desc "Deploy #{archive_name} to release_path"
